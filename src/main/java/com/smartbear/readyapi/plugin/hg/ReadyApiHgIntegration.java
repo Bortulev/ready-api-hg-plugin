@@ -129,4 +129,14 @@ public class ReadyApiHgIntegration implements VcsIntegration {
     public List<HistoryEntry> getProjectHistory(WsdlProject wsdlProject) {
         return new ArrayList<>();
     }
+
+    @Override
+    public List<VcsBranch> getBranchList(WsdlProject wsdlProject) {
+        return new ArrayList<>();
+    }
+
+    @Override
+    public boolean switchBranch(WsdlProject wsdlProject, VcsBranch vcsBranch) {
+        return false;
+    }
 }
