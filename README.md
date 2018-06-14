@@ -1,1 +1,1 @@
-# ready-api-hg-plugin
+# ReadyAPI Mercurial Integration Plugin
