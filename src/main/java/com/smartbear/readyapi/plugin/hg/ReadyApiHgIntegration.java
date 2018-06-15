@@ -16,7 +16,6 @@ import com.aragost.javahg.commands.StatusResult;
 import com.aragost.javahg.commands.Tag;
 import com.aragost.javahg.commands.TagCommand;
 import com.aragost.javahg.commands.TagsCommand;
-import com.aragost.javahg.commands.flags.PullCommandFlags;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.model.workspace.Workspace;
 import com.eviware.soapui.plugins.vcs.ActivationStatus;
@@ -156,24 +155,14 @@ public class ReadyApiHgIntegration implements VcsIntegration {
         }
 
         try {
-            PullCommand pk = PullCommandFlags.on(repo);
-
-            PullCommand pull = new PullCommand(repo);
-            List<Changeset> pullResult = pull.execute();
-
-        } catch (IOException ioe) {
-            throw new VcsIntegrationException("Error in executing push command", ioe);
-        }
-
-        try {
             Changeset changeset = commit.execute(files.toArray(new String[0]));
         } catch (ExecutionException ee) {
             throw new VcsIntegrationException(ee.getMessage(), ee);
         }
 
-        PullCommand pull = new PullCommand(repo);
+        PushCommand push = new PushCommand(repo);
         try {
-            pull.execute();
+            push.execute();
         } catch (IOException ioe) {
             throw new VcsIntegrationException("Error in executing pull command", ioe);
         }
