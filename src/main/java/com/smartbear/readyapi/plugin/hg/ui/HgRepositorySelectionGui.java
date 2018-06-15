@@ -89,6 +89,9 @@ public class HgRepositorySelectionGui implements RepositorySelectionGui {
         writer.write("[paths]\n");
         writer.write("default=" + remoteRepositoryPath);
         writer.write("\n" );
+        writer.write("[ui]\n");
+        writer.write("username=ReadyAPI User");
+        writer.write("\n" );
         writer.close();
 
         return true;
