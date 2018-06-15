@@ -1,10 +1,12 @@
 package com.smartbear.readyapi.plugin.hg.ui;
 
 import com.aragost.javahg.Repository;
+import com.aragost.javahg.commands.PullCommand;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.plugins.vcs.RepositorySelectionGui;
 import com.eviware.soapui.plugins.vcs.VcsIntegrationException;
 import com.eviware.soapui.support.UISupport;
+import com.smartbear.readyapi.plugin.hg.ReadyApiHgIntegration;
 import net.miginfocom.swing.MigLayout;
 
 import javax.swing.JButton;
@@ -15,6 +17,8 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import static com.eviware.soapui.support.UISupport.createLabelLink;
 
@@ -69,8 +73,42 @@ public class HgRepositorySelectionGui implements RepositorySelectionGui {
         return true;
     }
 
+    private boolean createHGRC(String localRepositoryPath, String remoteRepositoryPath) throws IOException {
+        File hgPath = new File(localRepositoryPath + File.separator + ".hg");
+        if (!hgPath.exists()) {
+            ReadyApiHgIntegration.logger.error("Repository (.hg) not found.");
+            return false;
+        }
+
+        File hgrcPath = new File(hgPath.getPath() + File.separator + "hgrc");
+        if (hgrcPath.exists()) {
+            throw new VcsIntegrationException("Cannot add link to remote repository. File 'hgrc' already exists");
+        }
+
+        FileWriter writer = new FileWriter(hgrcPath.getPath());
+        writer.write("[paths]\n");
+        writer.write("default=" + remoteRepositoryPath);
+        writer.write("\n" );
+        writer.close();
+
+        return true;
+    }
+
     @Override
     public void initializeRepository() {
+        try {
+            File projectDir = new File(project.getPath());
+
+            Repository.create(projectDir);
+            createHGRC(projectDir.getPath(), repoPath.getText());
+
+            Repository repo = Repository.open(projectDir);
+            PullCommand pull = new PullCommand(repo);
+            pull.cmdAppend("--update");
+            pull.execute();
+        } catch (IOException ioe) {
+            throw new VcsIntegrationException("Initialization of repository failed");
+        }
     }
 
     @Override

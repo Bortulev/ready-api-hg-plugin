@@ -49,7 +49,7 @@ import java.util.Set;
 
 @VcsIntegrationConfiguration(name = "Hg", description = "Mercurial Version Control System")
 public class ReadyApiHgIntegration implements VcsIntegration {
-    private final static Logger logger = LoggerFactory.getLogger(ReadyApiHgIntegration.class);
+    public final static Logger logger = LoggerFactory.getLogger(ReadyApiHgIntegration.class);
 
     private WsdlProject activeProject;
 
@@ -66,6 +66,7 @@ public class ReadyApiHgIntegration implements VcsIntegration {
         for (Tag tag : tags) {
             result.add(tag.getName());
         }
+
         return result;
     }
 
