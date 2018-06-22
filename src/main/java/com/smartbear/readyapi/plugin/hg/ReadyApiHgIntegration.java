@@ -4,7 +4,6 @@ import com.aragost.javahg.Changeset;
 import com.aragost.javahg.Repository;
 import com.aragost.javahg.commands.AddCommand;
 import com.aragost.javahg.commands.Branch;
-import com.aragost.javahg.commands.BranchCommand;
 import com.aragost.javahg.commands.BranchesCommand;
 import com.aragost.javahg.commands.CommitCommand;
 import com.aragost.javahg.commands.ExecutionException;
@@ -16,6 +15,7 @@ import com.aragost.javahg.commands.StatusResult;
 import com.aragost.javahg.commands.Tag;
 import com.aragost.javahg.commands.TagCommand;
 import com.aragost.javahg.commands.TagsCommand;
+import com.aragost.javahg.commands.UpdateCommand;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
 import com.eviware.soapui.model.workspace.Workspace;
 import com.eviware.soapui.plugins.vcs.ActivationStatus;
@@ -324,8 +324,12 @@ public class ReadyApiHgIntegration implements VcsIntegration {
     public boolean switchBranch(WsdlProject wsdlProject, VcsBranch vcsBranch) {
         File file = new File(wsdlProject.getPath());
         Repository repo = Repository.open(file);
-        BranchCommand branch = new BranchCommand(repo);
-        branch.set(vcsBranch.getName());
+        UpdateCommand update = new UpdateCommand(repo);
+        try {
+            update.rev(vcsBranch.getName()).execute();
+        } catch (IOException ioe) {
+            return false;
+        }
         return true;
     }
 }
